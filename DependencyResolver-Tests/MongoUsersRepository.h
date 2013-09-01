@@ -15,21 +15,33 @@
 * along with this library. If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "LocalUsersService.h"
+#pragma once
 
-using namespace Services::LocalServices;
+#include <QObject>
+#include <QMetaType>
+#include <QSharedPointer>
+#include <QMap>
 
-LocalUsersService::LocalUsersService(Repositories::IUsersRepository* usersRepositorry, QObject *parent) :
-    IUsersService(parent),
-    _usersRepository(Repositories::IUsersRepositoryPtr(usersRepositorry))
+#include "IUsersRepository.h"
+#include "MongoDBContext.h"
+
+namespace Repositories
 {
+    class MongoUsersRepository : public IUsersRepository
+    {
+        Q_OBJECT
+    public:
+        Q_INVOKABLE explicit MongoUsersRepository(Repositories::MongoDBContextPtr mongoDBContext, QObject *parent = 0);
+        virtual ~MongoUsersRepository();
+
+        virtual QString GetUserName(const quint8 &id);
+
+    private:
+        MongoDBContextPtr _mongoDBContext;
+        QMap<quint8, QString> _storage;
+    };
+
+    typedef QSharedPointer<MongoUsersRepository> MongoUsersRepositoryPtr;
 }
 
-LocalUsersService::~LocalUsersService()
-{
-}
-
-QString LocalUsersService::GetUserName(const quint8 &id)
-{
-    return _usersRepository->GetUserName(id);
-}
+Q_DECLARE_METATYPE(Repositories::MongoUsersRepositoryPtr)

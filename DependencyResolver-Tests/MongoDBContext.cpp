@@ -15,21 +15,25 @@
 * along with this library. If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "LocalUsersService.h"
+#include "MongoDBContext.h"
 
-using namespace Services::LocalServices;
+using namespace Repositories;
 
-LocalUsersService::LocalUsersService(Repositories::IUsersRepository* usersRepositorry, QObject *parent) :
-    IUsersService(parent),
-    _usersRepository(Repositories::IUsersRepositoryPtr(usersRepositorry))
+MongoDBContext::MongoDBContext(QObject *parent) :
+    QObject(parent)
 {
 }
 
-LocalUsersService::~LocalUsersService()
+MongoDBContext::~MongoDBContext()
 {
 }
 
-QString LocalUsersService::GetUserName(const quint8 &id)
+QString MongoDBContext::GetConnectionString()
 {
-    return _usersRepository->GetUserName(id);
+    return _connectionString;
+}
+
+void MongoDBContext::SetConnectionString(const QString &value)
+{
+    _connectionString = value;
 }

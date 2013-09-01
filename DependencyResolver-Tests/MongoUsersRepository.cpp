@@ -15,21 +15,25 @@
 * along with this library. If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "LocalUsersService.h"
+#include "MongoUsersRepository.h"
 
-using namespace Services::LocalServices;
+using namespace Repositories;
 
-LocalUsersService::LocalUsersService(Repositories::IUsersRepository* usersRepositorry, QObject *parent) :
-    IUsersService(parent),
-    _usersRepository(Repositories::IUsersRepositoryPtr(usersRepositorry))
+MongoUsersRepository::MongoUsersRepository(MongoDBContextPtr mongoDBContext, QObject *parent) :
+    IUsersRepository(parent),
+    _mongoDBContext(mongoDBContext)
+{
+    _storage.insert(1, "Andrew Erlichson");
+    _storage.insert(2, "Dwight Merriman");
+}
+
+MongoUsersRepository::~MongoUsersRepository()
 {
 }
 
-LocalUsersService::~LocalUsersService()
+QString MongoUsersRepository::GetUserName(const quint8 &id)
 {
-}
-
-QString LocalUsersService::GetUserName(const quint8 &id)
-{
-    return _usersRepository->GetUserName(id);
+    return _storage.contains(id)
+            ? _storage.value(id)
+            : "Void";
 }

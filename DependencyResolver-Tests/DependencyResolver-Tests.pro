@@ -20,7 +20,9 @@ SOURCES += DIContainerTest.cpp \
     RemoteUsersService.cpp \
     IUsersRepository.cpp \
     InMemoryUsersRepository.cpp \
-    LocalUsersService.cpp
+    LocalUsersService.cpp \
+    MongoUsersRepository.cpp \
+    MongoDBContext.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 INCLUDEPATH += $$PWD/../_bin
@@ -35,5 +37,7 @@ HEADERS += \
     RemoteUsersService.h \
     IUsersRepository.h \
     InMemoryUsersRepository.h \
-    LocalUsersService.h
+    LocalUsersService.h \
+    MongoUsersRepository.h \
+    MongoDBContext.h
 
