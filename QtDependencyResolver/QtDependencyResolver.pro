@@ -6,17 +6,17 @@
 
 QT       -= gui
 
-TARGET = $$qtLibraryTarget(DependencyResolver)
+TARGET = $$qtLibraryTarget(QtDependencyResolver)
 TEMPLATE = lib
 DESTDIR = $$PWD/../_bin
 CONFIG += debug_and_release build-all
 
-DEFINES += DEPENDENCYRESOLVER_LIBRARY
+DEFINES += QTDEPENDENCYRESOLVER_LIBRARY
 
 SOURCES += \
     DIContainer.cpp
 
 HEADERS +=\
-        dependencyresolver_global.h \
+        qtdependencyresolver_global.h \
     DIContainer.h
 

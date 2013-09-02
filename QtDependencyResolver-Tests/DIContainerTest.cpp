@@ -18,7 +18,7 @@
 #include <QString>
 #include <QtTest>
 
-#include "../DependencyResolver/DIContainer.h"
+#include "../QtDependencyResolver/DIContainer.h"
 
 #include "IUsersService.h"
 #include "LocalUsersService.h"
@@ -50,7 +50,7 @@ DIContainerTest::DIContainerTest()
 
 void DIContainerTest::testCase1()
 {
-    DependencyResolver::DIContainerPtr resolver = DependencyResolver::DIContainerPtr(new DependencyResolver::DIContainer);
+    QtDependencyResolver::DIContainerPtr resolver = QtDependencyResolver::DIContainerPtr(new QtDependencyResolver::DIContainer);
     resolver->Bind<IUsersService, RemoteServices::RemoteUsersService>();
     resolver->Bind<IUsersService, LocalServices::LocalUsersService>();
     resolver->Bind<IUsersRepository, InMemoryUsersRepository>();
@@ -72,7 +72,7 @@ void DIContainerTest::testCase1()
 
 void DIContainerTest::testCase2()
 {
-    DependencyResolver::DIContainerPtr resolver = DependencyResolver::DIContainerPtr(new DependencyResolver::DIContainer);
+    QtDependencyResolver::DIContainerPtr resolver = QtDependencyResolver::DIContainerPtr(new QtDependencyResolver::DIContainer);
     resolver->Bind<IUsersService, LocalServices::LocalUsersService>();
     resolver->Bind<IUsersRepository, MongoUsersRepository>();
 

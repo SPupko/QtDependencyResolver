@@ -21,7 +21,7 @@
 #include <QMetaMethod>
 #include <QDebug>
 
-using namespace DependencyResolver;
+using namespace QtDependencyResolver;
 
 class DIContainer::P : public QObject
 {

@@ -22,11 +22,11 @@
 #include <QSharedPointer>
 #include <QVariant>
 
-#include "dependencyresolver_global.h"
+#include "qtdependencyresolver_global.h"
 
-namespace DependencyResolver
+namespace QtDependencyResolver
 {
-    class DEPENDENCYRESOLVERSHARED_EXPORT DIContainer : public QObject
+    class QTDEPENDENCYRESOLVERSHARED_EXPORT DIContainer : public QObject
     {
         Q_OBJECT
     public:
@@ -64,4 +64,4 @@ namespace DependencyResolver
     typedef QSharedPointer<DIContainer> DIContainerPtr;
 }
 
-Q_DECLARE_METATYPE(DependencyResolver::DIContainerPtr)
+Q_DECLARE_METATYPE(QtDependencyResolver::DIContainerPtr)

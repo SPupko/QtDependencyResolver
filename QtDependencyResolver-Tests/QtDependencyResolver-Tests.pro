@@ -8,7 +8,7 @@ QT       += testlib
 
 QT       -= gui
 
-TARGET = $$qtLibraryTarget(DependencyResolver-Tests)
+TARGET = $$qtLibraryTarget(QtDependencyResolver-Tests)
 CONFIG   += console
 CONFIG   -= app_bundle
 TEMPLATE = app
@@ -28,9 +28,9 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 INCLUDEPATH += $$PWD/../_bin
 DEPENDPATH += $$PWD/../_bin
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lDependencyResolver
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lDependencyResolverd
-else:unix: LIBS += -L$$PWD/../_bin/ -lDependencyResolver
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolverd
+else:unix: LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver
 
 HEADERS += \
     IUsersService.h \
