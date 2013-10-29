@@ -15,25 +15,35 @@
 * along with this library. If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "MongoDBContext.h"
+#include "Person.h"
 
 using namespace DataObjects;
 
-MongoDBContext::MongoDBContext(QObject *parent) :
+Person::Person(QObject *parent) :
     QObject(parent)
 {
 }
 
-MongoDBContext::~MongoDBContext()
+Person::~Person()
 {
 }
 
-QString MongoDBContext::GetConnectionString()
+QString Person::GetName()
 {
-    return _connectionString;
+    return _name;
 }
 
-void MongoDBContext::SetConnectionString(const QString &value)
+void Person::SetName(const QString &name)
 {
-    _connectionString = value;
+    _name = name;
+}
+
+QString Person::GetPosition()
+{
+    return _position;
+}
+
+void Person::SetPosition(const QString &position)
+{
+    _position = position;
 }

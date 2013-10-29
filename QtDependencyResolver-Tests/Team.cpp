@@ -15,25 +15,28 @@
 * along with this library. If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "MongoDBContext.h"
+#include "Team.h"
 
 using namespace DataObjects;
 
-MongoDBContext::MongoDBContext(QObject *parent) :
+Team::Team(PersonPtr seniorJSDeveloper, PersonPtr ranger, QObject *parent) :
     QObject(parent)
 {
+    _persons
+            << seniorJSDeveloper
+            << ranger;
 }
 
-MongoDBContext::~MongoDBContext()
+Team::~Team()
 {
 }
 
-QString MongoDBContext::GetConnectionString()
+QList<PersonPtr> Team::GetPersons()
 {
-    return _connectionString;
+    return _persons;
 }
 
-void MongoDBContext::SetConnectionString(const QString &value)
+void Team::SetPersons(QList<PersonPtr> persons)
 {
-    _connectionString = value;
+    _persons = persons;
 }

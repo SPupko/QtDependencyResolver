@@ -21,7 +21,7 @@
 #include <QMetaType>
 #include <QSharedPointer>
 
-namespace Repositories
+namespace DataObjects
 {
     class MongoDBContext : public QObject
     {
@@ -40,4 +40,4 @@ namespace Repositories
     typedef QSharedPointer<MongoDBContext> MongoDBContextPtr;
 }
 
-Q_DECLARE_METATYPE(Repositories::MongoDBContextPtr)
+Q_DECLARE_METATYPE(DataObjects::MongoDBContextPtr)

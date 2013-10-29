@@ -52,10 +52,11 @@ namespace QtDependencyResolver
             return qobject_cast<ResolvableType*>(ResolveByName(QString(typeid(ResolvableType).name())));
         }
 
+        QObject* ResolveByName(QString typeName);
+
     private:
         void Register(const QString &typeName, const QMetaObject &metaObject);
         void Register(const QString &typeName, const QString &key, const QVariant &value);
-        QObject* ResolveByName(QString typeName);
 
     private:
         class P; QSharedPointer<P> _d;

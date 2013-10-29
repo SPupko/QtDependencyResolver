@@ -27,10 +27,14 @@
 #include "IUsersRepository.h"
 #include "InMemoryUsersRepository.h"
 #include "MongoUsersRepository.h"
+
 #include "MongoDBContext.h"
+#include "Person.h"
+#include "Team.h"
 
 using namespace Services;
 using namespace Repositories;
+using namespace DataObjects;
 
 class DIContainerTest : public QObject
 {
@@ -42,6 +46,7 @@ public:
 private Q_SLOTS:
     void testCase1();
     void testCase2();
+    void TestCase3();
 };
 
 DIContainerTest::DIContainerTest()
@@ -91,6 +96,39 @@ void DIContainerTest::testCase2()
         QString expected = "Services::LocalServices::LocalUsersService";
         QString msg("Resolving failure! Expected: " + expected + ", Actual: " + actual);
         QVERIFY2(actual == expected, msg.toUtf8());
+    }
+}
+
+void DIContainerTest::TestCase3()
+{
+    QtDependencyResolver::DIContainerPtr resolver = QtDependencyResolver::DIContainerPtr(new QtDependencyResolver::DIContainer);
+
+    PersonPtr p1 = PersonPtr(new Person);
+    p1->SetName("Alexander Solovyov");
+    // http://vk.com/video1361643_166064387
+    // http://frameworksdays.com/event/js-frameworks-day-2013/review/Functional-Reactive-Programming-%26-ClojureScript
+    // http://solovyov.net/
+    p1->SetPosition("seniorJSDeveloper");
+    resolver->Bind(p1->GetPosition(), QVariant::fromValue(p1));
+
+    PersonPtr p2 = PersonPtr(new Person);
+    p2->SetName("Maxim Dorofeev");
+    // http://www.slideshare.net/Cartmendum/shewhart-6sigma-and-snowflakemen
+    p2->SetPosition("ranger");
+    resolver->Bind(p2->GetPosition(), QVariant::fromValue(p2));
+
+    TeamPtr team = TeamPtr(resolver->Resolve<Team>());
+
+    if (team.isNull())
+    {
+        QFAIL("Resolving failure! NULL team from resolver");
+    }
+
+    QList<PersonPtr> persons = team->GetPersons();
+
+    if (persons.size() != 2)
+    {
+        QFAIL("Persons size failure!");
     }
 }
 

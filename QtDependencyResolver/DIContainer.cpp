@@ -153,6 +153,8 @@ QObject *DIContainer::ResolveByName(QString typeName)
         QString argType = constructorType.parameterTypes().at(index);
         QString argName = constructorType.parameterNames().at(index);
 
+        qDebug() << argType << argName;
+
         if (argType == "QObject*" && argName == "parent")
         {
             argNamesList << QByteArray();

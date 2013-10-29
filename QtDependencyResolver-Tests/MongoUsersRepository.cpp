@@ -19,7 +19,7 @@
 
 using namespace Repositories;
 
-MongoUsersRepository::MongoUsersRepository(MongoDBContextPtr mongoDBContext, QObject *parent) :
+MongoUsersRepository::MongoUsersRepository(DataObjects::MongoDBContextPtr mongoDBContext, QObject *parent) :
     IUsersRepository(parent),
     _mongoDBContext(mongoDBContext)
 {

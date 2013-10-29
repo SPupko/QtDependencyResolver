@@ -15,25 +15,31 @@
 * along with this library. If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "MongoDBContext.h"
+#pragma once
 
-using namespace DataObjects;
+#include <QObject>
+#include <QMetaType>
+#include <QSharedPointer>
 
-MongoDBContext::MongoDBContext(QObject *parent) :
-    QObject(parent)
+#include "Person.h"
+
+namespace DataObjects
 {
+    class Team : public QObject
+    {
+        Q_OBJECT
+    public:
+        explicit Team(DataObjects::PersonPtr seniorJSDeveloper, DataObjects::PersonPtr ranger, QObject *parent = 0);
+        virtual ~Team();
+
+        QList<PersonPtr> GetPersons();
+        void SetPersons(QList<PersonPtr> persons);
+
+    private:
+        QList<PersonPtr> _persons;
+    };
+
+    typedef QSharedPointer<Team> TeamPtr;
 }
 
-MongoDBContext::~MongoDBContext()
-{
-}
-
-QString MongoDBContext::GetConnectionString()
-{
-    return _connectionString;
-}
-
-void MongoDBContext::SetConnectionString(const QString &value)
-{
-    _connectionString = value;
-}
+Q_DECLARE_METATYPE(DataObjects::TeamPtr)

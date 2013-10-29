@@ -31,13 +31,13 @@ namespace Repositories
     {
         Q_OBJECT
     public:
-        Q_INVOKABLE explicit MongoUsersRepository(Repositories::MongoDBContextPtr mongoDBContext, QObject *parent = 0);
+        Q_INVOKABLE explicit MongoUsersRepository(DataObjects::MongoDBContextPtr mongoDBContext, QObject *parent = 0);
         virtual ~MongoUsersRepository();
 
         virtual QString GetUserName(const quint8 &id);
 
     private:
-        MongoDBContextPtr _mongoDBContext;
+        DataObjects::MongoDBContextPtr _mongoDBContext;
         QMap<quint8, QString> _storage;
     };
 
