@@ -6,7 +6,16 @@
 
 QT       -= gui
 
-TARGET = $$qtLibraryTarget(QtDependencyResolver)
+unix: {
+        CONFIG (debug, debug|release) {
+                TARGET = QtDependencyResolverd
+        } else {
+                TARGET = QtDependencyResolver
+        }
+} else {
+        TARGET = $$qtLibraryTarget(QtDependencyResolver)
+}
+
 TEMPLATE = lib
 DESTDIR = $$PWD/../_bin
 CONFIG += debug_and_release build-all

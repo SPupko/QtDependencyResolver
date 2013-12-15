@@ -21,6 +21,8 @@
 #include <QMetaType>
 #include <QSharedPointer>
 #include <QVariant>
+#include <typeinfo>
+#include <QDebug>
 
 #include "qtdependencyresolver_global.h"
 
@@ -36,27 +38,37 @@ namespace QtDependencyResolver
         template <typename ResolvableType, typename Type>
         void Bind()
         {
-            QObject* typeToObjectCastCheck = static_cast<Type*>(0); Q_UNUSED(typeToObjectCastCheck);
-            ResolvableType* typeToResolvableTypeCastCheck = static_cast<Type*>(0); Q_UNUSED(typeToResolvableTypeCastCheck);
-            Register(QString(typeid(ResolvableType).name()), static_cast<Type*>(0)->staticMetaObject);
+            QObject* objectFromType = static_cast<Type*>(0); Q_UNUSED(objectFromType);
+            QObject* objectFromResolvableType = static_cast<ResolvableType*>(0); Q_UNUSED(objectFromResolvableType);
+            ResolvableType* resolvableTypeFromType = static_cast<Type*>(0); Q_UNUSED(resolvableTypeFromType);
+            ClassBind(static_cast<ResolvableType*>(0)->staticMetaObject, static_cast<Type*>(0)->staticMetaObject);
+        }
+
+        template <typename Type>
+        void Bind()
+        {
+            QObject* objectFromType = static_cast<Type*>(0); Q_UNUSED(objectFromType);
+            ClassBind(static_cast<Type*>(0)->staticMetaObject);
         }
 
         void Bind(const QString &key, const QVariant &value)
         {
-            Register(value.typeName(), key, value);
+            ValueBind(key, value);
         }
 
         template <typename ResolvableType>
         ResolvableType* Resolve()
         {
-            return qobject_cast<ResolvableType*>(ResolveByName(QString(typeid(ResolvableType).name())));
+            QObject* resolvableTypeToObjectCastCheck = static_cast<ResolvableType*>(0); Q_UNUSED(resolvableTypeToObjectCastCheck);
+            return qobject_cast<ResolvableType*>(ResolveMetaobject(static_cast<ResolvableType*>(0)->staticMetaObject));
         }
 
-        QObject* ResolveByName(QString typeName);
+        QObject* ResolveMetaobject(QMetaObject metaObject);
 
     private:
-        void Register(const QString &typeName, const QMetaObject &metaObject);
-        void Register(const QString &typeName, const QString &key, const QVariant &value);
+        void ClassBind(const QMetaObject &resolvableTypeMeta, const QMetaObject &typeMeta);
+        void ClassBind(const QMetaObject &typeMeta);
+        void ValueBind(const QString &key, const QVariant &value);
 
     private:
         class P; QSharedPointer<P> _d;

@@ -29,7 +29,7 @@ namespace DataObjects
     {
         Q_OBJECT
     public:
-        explicit Team(DataObjects::PersonPtr seniorJSDeveloper, DataObjects::PersonPtr ranger, QObject *parent = 0);
+        Q_INVOKABLE explicit Team(DataObjects::PersonPtr seniorJSDeveloper, DataObjects::PersonPtr ranger, QObject *parent = 0);
         virtual ~Team();
 
         QList<PersonPtr> GetPersons();

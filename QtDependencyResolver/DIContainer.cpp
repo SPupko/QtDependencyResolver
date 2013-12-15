@@ -21,13 +21,50 @@
 #include <QMetaMethod>
 #include <QDebug>
 
+class CtorArg
+{
+public:
+    CtorArg(QString name, void* data):
+        _name(name.toUtf8()),
+        _data(data),
+        _hasValue(false)
+    {
+    }
+
+    CtorArg(QString name, QVariant value):
+        _name(name.toUtf8()),
+        _value(value),
+        _hasValue(true)
+    {
+    }
+
+    QGenericArgument toQArg()
+    {
+        if (_hasValue)
+        {
+            return QGenericArgument(_name.data(), _value.constData());
+        }
+
+        return _name == ""
+                ? QGenericArgument()
+                : QGenericArgument(_name.data(), &_data);
+    }
+
+private:
+    bool _hasValue;
+    void *_data;
+    QVariant _value;
+    QByteArray _name;
+
+    Q_DISABLE_COPY(CtorArg)
+};
+typedef QSharedPointer<CtorArg> CtorArgPtr;
+
 using namespace QtDependencyResolver;
 
 class DIContainer::P : public QObject
 {
 public:
-    static const char* CLASS_PREFIX;
-
     explicit P(QObject *parent = 0) :
         QObject(parent)
     {
@@ -39,18 +76,18 @@ public:
 
     void RegisterMetaObject(const QString &typeName, const QMetaObject &metaObject)
     {
-        _metaObjects.insert(ClearTypeName(typeName), metaObject);
+        _metaObjects.insert(typeName, metaObject);
     }
 
     bool ContainsMetaObject(const QString &typeName)
     {
-        return _metaObjects.contains(ClearTypeName(typeName));
+        return _metaObjects.contains(typeName);
     }
 
     QMetaObject GetMeataObject(const QString &typeName)
     {
         return ContainsMetaObject(typeName)
-                ? _metaObjects.value(ClearTypeName(typeName))
+                ? _metaObjects.value(typeName)
                 : QMetaObject();
     }
 
@@ -86,22 +123,76 @@ public:
                 : QVariant();
     }
 
-private:
-    QString ClearTypeName(const QString &typeName)
+    QObject* ResolveByName(QString typeName)
     {
-        QString result = typeName;
+        if (typeName.endsWith("*"))
+        {
+            typeName.chop(1);
+        }
 
-        return result.startsWith(CLASS_PREFIX)
-                ? result.remove(CLASS_PREFIX)
-                : result;
+        if (!ContainsMetaObject(typeName))
+        {
+            qDebug() << "DIContainer: " << typeName << " is not registered or may be you forgot specify namespace in constructor!";
+            return NULL;
+        }
+
+        QMetaObject metaObject = GetMeataObject(typeName);
+        QMetaMethod constructorType = metaObject.constructor(0);
+        QList<CtorArgPtr> ctorArguments;
+
+        for (quint8 index = 0; index < 10; index++)
+        {
+            if (index >= constructorType.parameterTypes().count())
+            {
+                CtorArgPtr ctorArg(new CtorArg("", 0));
+                ctorArguments << ctorArg;
+                continue;
+            }
+
+            QString argType = constructorType.parameterTypes().at(index);
+            QString argName = constructorType.parameterNames().at(index);
+
+            if (argType == "QObject*" && argName == "parent")
+            {
+                CtorArgPtr ctorArg(new CtorArg("QObject*", 0));
+                ctorArguments << ctorArg;
+                continue;
+            }
+
+            if (ContainsValue(argType, argName))
+            {
+                CtorArgPtr ctorArg(new CtorArg(argType, GetValue(argType, argName)));
+                ctorArguments << (ctorArg);
+                continue;
+            }
+
+            QObject* argValue = ResolveByName(argType);
+
+            if (argValue == NULL)
+            {
+                return NULL;
+            }
+
+            CtorArgPtr ctorArg(new CtorArg(argType, static_cast<void *>(argValue)));
+            ctorArguments << ctorArg;
+        }
+
+        QObject  *instance = metaObject.newInstance(ctorArguments[0]->toQArg(), ctorArguments[1]->toQArg(), ctorArguments[2]->toQArg(), ctorArguments[3]->toQArg(), ctorArguments[4]->toQArg(),
+                ctorArguments[5]->toQArg(),ctorArguments[6]->toQArg(),ctorArguments[7]->toQArg(),ctorArguments[8]->toQArg(),ctorArguments[9]->toQArg());
+
+        if (!instance)
+        {
+            qDebug() << "DIContainer: could not create an instance of class " << metaObject.className();
+            return NULL;
+        }
+
+        return instance;
     }
 
 private:
     QHash<QString, QMetaObject> _metaObjects;
     QHash<QString, QHash<QString, QVariant> > _objects;
 };
-
-const char* DIContainer::P::CLASS_PREFIX = "class ";
 
 DIContainer::DIContainer(QObject *parent) :
     QObject(parent),
@@ -113,81 +204,22 @@ DIContainer::~DIContainer()
 {
 }
 
-void DIContainer::Register(const QString &typeName, const QMetaObject &metaObject)
+QObject *DIContainer::ResolveMetaobject(QMetaObject metaObject)
 {
-    _d->RegisterMetaObject(typeName, metaObject);
+    return _d->ResolveByName(metaObject.className());
 }
 
-void DIContainer::Register(const QString &typeName, const QString &key, const QVariant &value)
+void DIContainer::ClassBind(const QMetaObject &resolvableTypeMeta, const QMetaObject &typeMeta)
 {
-    _d->RegisterValue(typeName, key, value);
+    _d->RegisterMetaObject(resolvableTypeMeta.className(), typeMeta);
 }
 
-QObject *DIContainer::ResolveByName(QString typeName)
+void DIContainer::ClassBind(const QMetaObject &typeMeta)
 {
-    if (typeName.endsWith("*"))
-    {
-        typeName.chop(1);
-    }
+    _d->RegisterMetaObject(typeMeta.className(), typeMeta);
+}
 
-    if (!_d->ContainsMetaObject(typeName))
-    {
-        qDebug() << "DIContainer: " << typeName << " is not registered or may be you forgot specify namespace in constructor!";
-        return NULL;
-    }
-
-    QMetaObject metaObject = _d->GetMeataObject(typeName);
-    QMetaMethod constructorType = metaObject.constructor(0);
-    QList<QGenericArgument> ctorArgs;
-    QList<QByteArray> argNamesList;
-
-    for (quint8 index = 0; index < 10; index++)
-    {
-        if (index >= constructorType.parameterTypes().count())
-        {
-            argNamesList << QByteArray();
-            ctorArgs << QGenericArgument();
-            continue;
-        }
-
-        QString argType = constructorType.parameterTypes().at(index);
-        QString argName = constructorType.parameterNames().at(index);
-
-        qDebug() << argType << argName;
-
-        if (argType == "QObject*" && argName == "parent")
-        {
-            argNamesList << QByteArray();
-            ctorArgs << Q_ARG(QObject*, 0);
-            continue;
-        }
-
-        if (_d->ContainsValue(argType, argName))
-        {
-            argNamesList << argType.toUtf8();
-            ctorArgs << QGenericArgument(argNamesList[index].data(), _d->GetValue(argType, argName).constData());
-            continue;
-        }
-
-        QObject* argValue = ResolveByName(argType);
-
-        if (argValue == NULL)
-        {
-            return NULL;
-        }
-
-        argNamesList << argType.toUtf8();
-        ctorArgs << QGenericArgument(argNamesList[index].data(), static_cast<const void *>(&argValue));
-    }
-
-    QObject* instance = metaObject.newInstance(ctorArgs[0], ctorArgs[1], ctorArgs[2], ctorArgs[3], ctorArgs[4],
-            ctorArgs[5], ctorArgs[6], ctorArgs[7], ctorArgs[8], ctorArgs[9]);
-
-    if (!instance)
-    {
-        qDebug() << "DIContainer: could not create an instance of class " << metaObject.className();
-        return NULL;
-    }
-
-    return instance;
+void DIContainer::ValueBind(const QString &key, const QVariant &value)
+{
+    _d->RegisterValue(value.typeName(), key, value);
 }

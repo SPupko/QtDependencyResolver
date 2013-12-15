@@ -33,7 +33,7 @@ namespace Repositories
         Q_INVOKABLE explicit InMemoryUsersRepository(const QString &userName, QObject *parent = 0);
         virtual ~InMemoryUsersRepository();
 
-        virtual QString GetUserName(const quint8 &id);
+        Q_INVOKABLE virtual QString GetUserName(const quint8 &id);
 
     private:
         QString _userName;
