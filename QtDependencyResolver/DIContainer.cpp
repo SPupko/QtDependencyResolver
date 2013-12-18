@@ -51,10 +51,10 @@ public:
     }
 
 private:
-    bool _hasValue;
+    QByteArray _name;
     void *_data;
     QVariant _value;
-    QByteArray _name;
+    bool _hasValue;
 
     Q_DISABLE_COPY(CtorArg)
 };

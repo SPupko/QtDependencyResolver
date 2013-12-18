@@ -58,28 +58,32 @@ HEADERS += \
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLL
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLLd
-else:unix: LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLL
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLL
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLLd
 
 INCLUDEPATH += $$PWD/../_bin
 DEPENDPATH += $$PWD/../_bin
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLL-Native
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLL-Natived
-else:unix: LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLL-Native
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLL-Native
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-BLL-Natived
 
 INCLUDEPATH += $$PWD/../_bin
 DEPENDPATH += $$PWD/../_bin
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DALd
-else:unix: LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DALd
 
 INCLUDEPATH += $$PWD/../_bin
 DEPENDPATH += $$PWD/../_bin
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL-Fake
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL-Faked
-else:unix: LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL-Fake
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL-Fake
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL-Faked
 
 INCLUDEPATH += $$PWD/../_bin
 DEPENDPATH += $$PWD/../_bin

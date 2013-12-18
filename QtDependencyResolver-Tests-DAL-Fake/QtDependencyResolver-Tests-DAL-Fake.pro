@@ -36,7 +36,8 @@ HEADERS +=\
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DALd
-else:unix: LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL
+else:unix:CONFIG(release, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DAL
+else:unix:CONFIG(debug, debug|release): LIBS += -L$$PWD/../_bin/ -lQtDependencyResolver-Tests-DALd
 
 INCLUDEPATH += $$PWD/../_bin
 DEPENDPATH += $$PWD/../_bin
